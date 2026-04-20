@@ -13,7 +13,7 @@ Works as a protocol-level compatibility workaround
 
 NeoForge servers (primary testing target)
 May work with Forge / Fabric setups depending on environment
-Minecraft 1.21.x
+Minecraft 1.21.x.
 Requires Velocity proxy environment to be relevant
 Building from source
 
