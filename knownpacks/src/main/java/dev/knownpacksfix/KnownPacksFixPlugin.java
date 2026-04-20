@@ -42,7 +42,7 @@ public class KnownPacksFixPlugin {
      * When a modded client sends more packs than that, Velocity throws
      * QuietDecoderException("too many known packs") and disconnects the player.
      *
-     * We use reflection to find that field and raise it to Integer.MAX_VALUE.
+     * We use reflection to find that field and raise it to 1024.
      */
     private void patchKnownPacksLimit() throws Exception {
         Class<?> packetClass = Class.forName(
@@ -90,7 +90,7 @@ public class KnownPacksFixPlugin {
     }
 
     /**
-     * Raises a static int field to Integer.MAX_VALUE.
+     * Raises a static int field to 1024.
      * Uses Unsafe for final fields, plain reflection otherwise.
      */
     @SuppressWarnings("removal")
@@ -104,12 +104,12 @@ public class KnownPacksFixPlugin {
             long offset = unsafe.staticFieldOffset(field);
             Object base = unsafe.staticFieldBase(field);
             int old = unsafe.getInt(base, offset);
-            unsafe.putInt(base, offset, Integer.MAX_VALUE);
-            logger.info("[KnownPacksFix] (final) {} → Integer.MAX_VALUE (was {})", field.getName(), old);
+            unsafe.putInt(base, offset, 1024);
+            logger.info("[KnownPacksFix] (final) {} → 1024 (was {})", field.getName(), old);
         } else {
             int old = field.getInt(null);
-            field.setInt(null, Integer.MAX_VALUE);
-            logger.info("[KnownPacksFix] {} → Integer.MAX_VALUE (was {})", field.getName(), old);
+            field.setInt(null, 1024);
+            logger.info("[KnownPacksFix] {} → 1024 (was {})", field.getName(), old);
         }
     }
 }
