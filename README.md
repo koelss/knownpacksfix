@@ -46,9 +46,6 @@ This project is open source under the MIT License.
 
 You are free to:
 
-Use it
-Modify it
-Fork it
-Redistribute it
+Use it, modify it, fork it, redistribute it
 
 Credit is appreciated but not required.
