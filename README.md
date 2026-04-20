@@ -38,9 +38,7 @@ Output
 
 # Installation
 
-Build or download the .jar file
-Place it into your server’s plugins folder
-Restart the proxy
+Build or download the .jar file. Place it into your server’s plugins folder and then restart the proxy.
 
 # License
 
