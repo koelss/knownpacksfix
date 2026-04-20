@@ -27,7 +27,7 @@ Apache Maven installed and added to PATH
 
 Download the project as a ZIP file from GitHub
 Extract it to a folder.
-Open a terminal inside that folder
+Open a terminal inside that folder and
 Run:
 mvn clean package
 
