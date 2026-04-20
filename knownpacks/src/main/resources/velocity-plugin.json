@@ -1,0 +1,9 @@
+{
+  "id": "knownpacksfix",
+  "name": "KnownPacksFix",
+  "version": "4.0.0",
+  "description": "Patches KnownPacksPacket MAX_KNOWN_PACKS limit to allow modded clients to join",
+  "authors": ["knownpacksfix"],
+  "main": "dev.knownpacksfix.KnownPacksFixPlugin",
+  "dependencies": []
+}
