@@ -22,7 +22,9 @@ Building from source
 Requirements
 Java JDK 21 or newer
 Apache Maven installed and added to PATH
-Download source
+
+# Download source
+
 Download the project as a ZIP file from GitHub
 Extract it to a folder
 Open a terminal inside that folder
