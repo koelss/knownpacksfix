@@ -1,0 +1,23 @@
+# KnownPacksFix Configuration
+# Author: Koels | Version: 4.1.0
+#
+# This plugin patches Velocity's internal KnownPacksPacket limit so that
+# modded clients (NeoForge, Forge, Fabric) can join without being disconnected
+# with "too many known packs".
+
+# pack-limit: The new maximum number of resource packs a client may declare.
+#   Velocity's built-in default is 64, which is too low for heavily modded clients.
+#   Increase this value if players with many mods are still being disconnected.
+#   Must be a positive integer.
+#   Default: 1024
+pack-limit: 1024
+
+# log-fields: Log all field names found in KnownPacksPacket when the proxy starts.
+#   Useful for diagnosing compatibility issues after Velocity updates change internal names.
+#   Default: true
+log-fields: true
+
+# debug: Enable verbose output for each patching step (old value, new value, field type).
+#   Disable in production to keep logs clean.
+#   Default: false
+debug: false

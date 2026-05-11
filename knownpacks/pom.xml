@@ -6,11 +6,11 @@
 
     <groupId>dev.knownpacksfix</groupId>
     <artifactId>KnownPacksFix</artifactId>
-    <version>1.0.0</version>
+    <version>4.1.0</version>
     <packaging>jar</packaging>
 
     <name>KnownPacksFix</name>
-    <description>Intercepts and truncates oversized KnownPacksPacket from modded clients to prevent disconnect on Velocity.</description>
+    <description>Intercepts and patches the KnownPacksPacket limit on Velocity to allow modded clients to join.</description>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
