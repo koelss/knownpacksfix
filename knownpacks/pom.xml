@@ -6,7 +6,7 @@
 
     <groupId>dev.knownpacksfix</groupId>
     <artifactId>KnownPacksFix</artifactId>
-    <version>4.1.0</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>KnownPacksFix</name>

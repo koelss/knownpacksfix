@@ -15,7 +15,7 @@ import java.nio.file.Path;
 @Plugin(
     id = "knownpacksfix",
     name = "KnownPacksFix",
-    version = "4.1.0",
+    version = "1.1.0",
     description = "Patches KnownPacksPacket MAX_KNOWN_PACKS limit to allow modded clients to join",
     authors = {"Koels"}
 )
@@ -72,7 +72,7 @@ public class KnownPacksFixPlugin {
                 Field field = packetClass.getDeclaredField(candidateName);
                 if (field.getType() == int.class) {
                     patchIntField(field, config);
-                    logger.info("[KnownPacksFix] v4.1.0 — Patched '{}' to {}. Modded clients can now join!",
+                    logger.info("[KnownPacksFix] v1.1.0 — Patched '{}' to {}. Modded clients can now join!",
                         candidateName, config.getPackLimit());
                     return;
                 }
@@ -91,7 +91,7 @@ public class KnownPacksFixPlugin {
                             field.getName(), VANILLA_LIMIT);
                     }
                     patchIntField(field, config);
-                    logger.info("[KnownPacksFix] v4.1.0 — Patched '{}' to {}. Modded clients can now join!",
+                    logger.info("[KnownPacksFix] v1.1.0 — Patched '{}' to {}. Modded clients can now join!",
                         field.getName(), config.getPackLimit());
                     return;
                 }
