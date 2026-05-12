@@ -1,5 +1,5 @@
 # KnownPacksFix Configuration
-# Author: Koels | Version: 1.1.0
+# Author: Koels | Version: 1.2.0
 #
 # This plugin patches Velocity's internal KnownPacksPacket limit so that
 # modded clients (NeoForge, Forge, Fabric) can join without being disconnected
@@ -7,17 +7,31 @@
 
 # pack-limit: The new maximum number of resource packs a client may declare.
 #   Velocity's built-in default is 64, which is too low for heavily modded clients.
-#   Increase this value if players with many mods are still being disconnected.
-#   Must be a positive integer.
+#   Increase this if players with very large modpacks are still being disconnected.
+#   Must be a positive integer greater than 64. Values below 64 will trigger a warning.
+#   Values above 10000 will also trigger a warning as they may cause memory issues.
 #   Default: 1024
 pack-limit: 1024
 
-# log-fields: Log all field names found in KnownPacksPacket when the proxy starts.
-#   Useful for diagnosing compatibility issues after Velocity updates change internal names.
+# log-fields: Log all field names and types found in KnownPacksPacket on proxy startup.
+#   Useful for diagnosing compatibility issues after a Velocity update changes internals.
 #   Default: true
 log-fields: true
 
-# debug: Enable verbose output for each patching step (old value, new value, field type).
-#   Disable in production to keep logs clean.
+# debug: Enable verbose output for each patching step, including old value, new value,
+#   and whether Unsafe was used for final fields. Leave off in production.
 #   Default: false
 debug: false
+
+# patch-all-matches: If true, patches every field that matches instead of stopping at
+#   the first one found. Only enable this if a single patch is not working correctly.
+#   Default: false
+patch-all-matches: false
+
+# custom-field-names: Additional field name candidates to try, comma-separated.
+#   Useful if you are running a Velocity fork that uses a different internal field name.
+#   The built-in candidates are: MAX_KNOWN_PACKS, MAXIMUM_KNOWN_PACKS, MAX_PACKS, LIMIT, MAX
+#   Example: MY_CUSTOM_FIELD,ANOTHER_FIELD
+#   Leave empty to use only the built-in candidates.
+#   Default: (empty)
+custom-field-names:

@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class PluginConfig {
@@ -17,17 +20,24 @@ public class PluginConfig {
     private final int packLimit;
     private final boolean logFields;
     private final boolean debug;
+    private final boolean patchAllMatches;
+    private final List<String> customFieldNames;
 
-    private PluginConfig(int packLimit, boolean logFields, boolean debug) {
+    private PluginConfig(int packLimit, boolean logFields, boolean debug,
+                         boolean patchAllMatches, List<String> customFieldNames) {
         this.packLimit = packLimit;
         this.logFields = logFields;
         this.debug = debug;
+        this.patchAllMatches = patchAllMatches;
+        this.customFieldNames = Collections.unmodifiableList(customFieldNames);
     }
 
     static PluginConfig load(Path dataDirectory, Logger logger) {
         int packLimit = 1024;
         boolean logFields = true;
         boolean debug = false;
+        boolean patchAllMatches = false;
+        List<String> customFieldNames = new ArrayList<>();
 
         try {
             Files.createDirectories(dataDirectory);
@@ -40,25 +50,48 @@ public class PluginConfig {
             Map<String, String> values = parseSimpleYaml(configPath);
 
             if (values.containsKey("pack-limit")) {
+                String raw = values.get("pack-limit");
                 try {
-                    int parsed = Integer.parseInt(values.get("pack-limit"));
-                    if (parsed > 0) packLimit = parsed;
+                    int parsed = Integer.parseInt(raw);
+                    if (parsed > 0) {
+                        packLimit = parsed;
+                    } else {
+                        logger.warn("[KnownPacksFix] Config error: 'pack-limit' must be a positive integer (got '{}') — using default (1024)", raw);
+                    }
                 } catch (NumberFormatException e) {
-                    logger.warn("[KnownPacksFix] Invalid pack-limit in config.yml — using default (1024)");
+                    logger.warn("[KnownPacksFix] Config error: 'pack-limit' is not a valid integer (got '{}') — using default (1024)", raw);
                 }
             }
+
             if (values.containsKey("log-fields")) {
                 logFields = Boolean.parseBoolean(values.get("log-fields"));
             }
+
             if (values.containsKey("debug")) {
                 debug = Boolean.parseBoolean(values.get("debug"));
             }
 
+            if (values.containsKey("patch-all-matches")) {
+                patchAllMatches = Boolean.parseBoolean(values.get("patch-all-matches"));
+            }
+
+            if (values.containsKey("custom-field-names")) {
+                String raw = values.get("custom-field-names").trim();
+                if (!raw.isEmpty()) {
+                    for (String name : raw.split(",")) {
+                        String trimmed = name.trim();
+                        if (!trimmed.isEmpty()) {
+                            customFieldNames.add(trimmed);
+                        }
+                    }
+                }
+            }
+
         } catch (IOException e) {
-            logger.warn("[KnownPacksFix] Could not load config.yml, using defaults: {}", e.getMessage());
+            logger.warn("[KnownPacksFix] Could not load config.yml — using defaults: {}", e.getMessage());
         }
 
-        return new PluginConfig(packLimit, logFields, debug);
+        return new PluginConfig(packLimit, logFields, debug, patchAllMatches, customFieldNames);
     }
 
     private static void copyDefaultConfig(Path destination) throws IOException {
@@ -94,5 +127,13 @@ public class PluginConfig {
 
     public boolean isDebug() {
         return debug;
+    }
+
+    public boolean isPatchAllMatches() {
+        return patchAllMatches;
+    }
+
+    public List<String> getCustomFieldNames() {
+        return customFieldNames;
     }
 }
