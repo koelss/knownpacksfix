@@ -2,16 +2,21 @@ package dev.knownpacksfix;
 
 import org.slf4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PluginConfig {
 
@@ -45,6 +50,9 @@ public class PluginConfig {
 
             if (!Files.exists(configPath)) {
                 copyDefaultConfig(configPath);
+            } else {
+                // Config already exists — add any keys introduced in newer plugin versions
+                updateConfig(configPath, logger);
             }
 
             Map<String, String> values = parseSimpleYaml(configPath);
@@ -92,6 +100,69 @@ public class PluginConfig {
         }
 
         return new PluginConfig(packLimit, logFields, debug, patchAllMatches, customFieldNames);
+    }
+
+    /**
+     * Compares the existing config on disk against the bundled default config.
+     * Any keys present in the default but missing from the existing file are
+     * appended (along with their comments) so users always have access to new
+     * options after a plugin update — without losing their current settings.
+     */
+    private static void updateConfig(Path configPath, Logger logger) throws IOException {
+        Set<String> existingKeys = parseSimpleYaml(configPath).keySet();
+
+        // Read the bundled default config line by line
+        List<String> defaultLines = new ArrayList<>();
+        try (InputStream in = PluginConfig.class.getResourceAsStream("/" + CONFIG_FILE)) {
+            if (in == null) return;
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    defaultLines.add(line);
+                }
+            }
+        }
+
+        // Walk the default config and collect blocks for any keys missing from the existing file
+        List<String> toAppend = new ArrayList<>();
+        List<String> pendingComments = new ArrayList<>();
+        int newKeyCount = 0;
+
+        for (String line : defaultLines) {
+            String trimmed = line.trim();
+
+            if (trimmed.isEmpty() || trimmed.startsWith("#")) {
+                pendingComments.add(line);
+            } else {
+                int colon = trimmed.indexOf(':');
+                if (colon > 0) {
+                    String key = trimmed.substring(0, colon).trim();
+                    if (!existingKeys.contains(key)) {
+                        // First missing key: add a separator so it's clear these were auto-added
+                        if (newKeyCount == 0) {
+                            toAppend.add("");
+                            toAppend.add("# ---- The following options were added automatically by a plugin update ----");
+                        }
+                        toAppend.addAll(pendingComments);
+                        toAppend.add(line);
+                        newKeyCount++;
+                    }
+                }
+                pendingComments.clear();
+            }
+        }
+
+        if (newKeyCount > 0) {
+            try (BufferedWriter writer = Files.newBufferedWriter(configPath, StandardCharsets.UTF_8,
+                    StandardOpenOption.APPEND)) {
+                for (String line : toAppend) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+            logger.info("[KnownPacksFix] config.yml updated — added {} new option(s). Check the bottom of the file.",
+                newKeyCount);
+        }
     }
 
     private static void copyDefaultConfig(Path destination) throws IOException {

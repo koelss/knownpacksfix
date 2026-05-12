@@ -21,7 +21,7 @@ import java.util.List;
 @Plugin(
     id = "knownpacksfix",
     name = "KnownPacksFix",
-    version = "1.2.0",
+    version = "1.2.1",
     description = "Patches KnownPacksPacket MAX_KNOWN_PACKS limit to allow modded clients to join",
     authors = {"Koels"}
 )
@@ -85,7 +85,7 @@ public class KnownPacksFixPlugin {
 
     public void sendStatus(CommandSource source) {
         String velocityVer = getVelocityVersion();
-        source.sendMessage(Component.text("--- KnownPacksFix v1.2.0 ---", NamedTextColor.GOLD));
+        source.sendMessage(Component.text("--- KnownPacksFix v1.2.1 ---", NamedTextColor.GOLD));
         source.sendMessage(Component.text("Velocity version : ", NamedTextColor.GRAY)
             .append(Component.text(velocityVer, NamedTextColor.WHITE)));
         source.sendMessage(Component.text("Patch applied    : ", NamedTextColor.GRAY)
@@ -265,7 +265,7 @@ public class KnownPacksFixPlugin {
 
     private void logResult(PatchResult result) {
         if (result.isVerified()) {
-            logger.info("[KnownPacksFix] v1.2.0 — Patched '{}' ({} → {}). Modded clients can now join!",
+            logger.info("[KnownPacksFix] v1.2.1 — Patched '{}' ({} → {}). Modded clients can now join!",
                 result.getFieldName(), result.getOldValue(), result.getNewValue());
         } else {
             logger.warn("[KnownPacksFix] Patched '{}' but verification failed — value may not have changed!",

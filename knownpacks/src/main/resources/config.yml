@@ -1,5 +1,5 @@
 # KnownPacksFix Configuration
-# Author: Koels | Version: 1.2.0
+# Author: Koels | Version: 1.2.1
 #
 # This plugin patches Velocity's internal KnownPacksPacket limit so that
 # modded clients (NeoForge, Forge, Fabric) can join without being disconnected
